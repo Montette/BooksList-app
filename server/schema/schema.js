@@ -113,7 +113,7 @@ const Mutation = new GraphQLObjectType({
             args: {
                 title: { type: new GraphQLNonNull(GraphQLString)},
                 genre: { type: new GraphQLNonNull(GraphQLString)},
-                authorId: { type: new GraphQLNonNull(GraphQLID)}
+                authorId: { type: new GraphQLNonNull(GraphQLID)},
             },
             resolve(parent, args) {
                 let book = new Book({

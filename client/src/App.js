@@ -1,25 +1,61 @@
 import React, { Component } from 'react';
 import BookList from './components/BookList';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import BookDetails from './components/BookDetails';
+import { getBooksQuery, removeBookMutation } from './queries/queries';
+import { graphql } from 'react-apollo';
+import BookForm from './components/BookForm'
 
 import './App.css';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
-})
-
 
 class App extends Component {
+
+  state = {
+    selectedBookId: null,
+    isSelectedBookRemoving: false
+  }
+
+  selectBookHandler = (id) => {
+    this.setState({
+      ...this.state,
+      isSelectedBookRemoving: false,
+      selectedBookId: id
+    })
+  }
+
+  removeHandler = (id) => {
+    this.props.removeBookMutation({
+      variables: {
+        id
+      },
+      refetchQueries: [{ query: getBooksQuery }]
+    });
+    this.setState({
+      ...this.state,
+      isSelectedBookRemoving: true
+    })
+  }
   render() {
     return (
-      <ApolloProvider client={client}>
         <div className="container">
-          <BookList />
-        </div>
-      </ApolloProvider>
+          <BookList selectBook={this.selectBookHandler}/>
+        
+          {this.state.selectedBookId && this.state.isSelectedBookRemoving === false? 
+          <BookDetails 
+            id ={this.state.selectedBookId} 
+            changeSelectedBook = {this.selectBookHandler} 
+            removeBook={this.removeHandler}
+            />   
+            : 
+            <p>No book selected</p>}
+            <BookForm mut='updagggte'/>
+        </div>  
     );
   }
 }
 
-export default App;
+export default graphql(removeBookMutation, {name: "removeBookMutation"})(App)
+
+// graphql(removeBookMutation, { name: "removeBookMutation" })
+// (AddBook);
+// export default App;
