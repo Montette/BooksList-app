@@ -127,12 +127,28 @@ const Mutation = new GraphQLObjectType({
         deleteBook: {
             type: BookType,
             args: {
-                id: { type: GraphQLID }
+                id: { type: new GraphQLNonNull(GraphQLID) }
             },
             resolve(parent, args) {
                return Book.findByIdAndDelete(args.id)
             }
         },
+        updateBook: {
+            type: BookType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID )},
+                title: { type: GraphQLString},
+                genre: { type: GraphQLString},
+            },
+            resolve(parent, args) {
+                let book;
+                function changeValue(k) {
+                    book = Book.findByIdAndUpdate(args.id, {[k]: args[k]});
+                }
+                Object.keys(args).filter(key => key !== 'id' && args[key] !== null).forEach(k => changeValue(k));
+                return book;
+            }
+        }
     }
 })
 
