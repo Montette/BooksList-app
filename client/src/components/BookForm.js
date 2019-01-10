@@ -85,20 +85,29 @@ class BookForm extends React.Component {
 
         newBook[event.target.name] = event.target.value;
 
-        let isNewAuthor;
-        if(event.target.value === 'New author') {
-            isNewAuthor = true;
-        } else if (event.target.name === 'bookAuthor' && event.target.value !== 'New author') {
-            isNewAuthor = false
-        };
+        // let isNewAuthor;
+        // if(event.target.value === 'New author') {
+        //     isNewAuthor = true;
+        // } else if (event.target.name === 'bookAuthor' && event.target.value !== 'New author') {
+        //     isNewAuthor = false
+        // };
 
     
         this.setState({
             ...this.state,
             newBook,
-            addingAuthor: isNewAuthor
+            // addingAuthor: isNewAuthor
             
         });
+
+
+        if(event.target.name === 'bookAuthor') {
+            let addingAuthor= event.target.value === 'New author' ? true : false;
+            this.setState({
+                ...this.state,
+                addingAuthor
+            })
+        }
 
 
 
