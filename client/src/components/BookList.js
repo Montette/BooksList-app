@@ -6,35 +6,23 @@ import { getBooksQuery } from '../queries/queries';
 
 
 
-class BookList extends Component {
-
-
-  render() {
-    return (
-
+const BookList = (props) => (
         <Query query={getBooksQuery}>
             {({ loading, error, data}) => {
                 if (loading) return "Loading...";
                 if (error) return `Error! ${error.message}`;
                 const books = data.books.map(book => (
-                    <li key={book.id} onClick={()=> this.props.selectBook(book.id)}>{book.title}</li>
+                    <li key={book.id} onClick={()=> props.selectBook(book.id)}>{book.title}</li>
                 ));
-
                 return (
                     <div className="">
-                        <ul id='book-list'>
-                        
+                        <ul id='book-list'>                       
                             {books}
                         </ul>
-
                     </div>
                 )
             }}
-         
-
         </Query>
-    );
-  }
-}
+)
 
 export default BookList

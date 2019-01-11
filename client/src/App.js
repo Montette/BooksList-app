@@ -56,6 +56,3 @@ class App extends Component {
 
 export default graphql(removeBookMutation, {name: "removeBookMutation"})(App)
 
-// graphql(removeBookMutation, { name: "removeBookMutation" })
-// (AddBook);
-// export default App;
