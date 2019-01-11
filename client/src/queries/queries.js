@@ -63,10 +63,13 @@ const addAuthorMutation = gql`
 `;
 
 const updateBookMutation = gql`
-    mutation UpdateBook($genre: String, $title: String, $id: ID!){
-        updateBook(name: $name, genre: $genre, id: $id){
-            name
+    mutation UpdateBook($genre: String, $title: String, $authorId: ID, $id: ID!){
+        updateBook(title: $title, genre: $genre, authorId: $authorId, id: $id){
+            title
             genre
+            author {
+                name
+            }
             id
         }
     }

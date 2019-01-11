@@ -14,8 +14,8 @@ const BookDetails = (props) => (
                 return (
                     <div>
                     <h2>{ data.book.title }</h2>
-                    <p>{ data.book.genre }</p>
-                    <p>{ data.book.author.name }</p>
+                    <p>Genre: { data.book.genre }</p>
+                    <p>Author: { data.book.author.name }</p>
                     <p>All books by this author:</p>
                     <ul className="other-books">
                         { data.book.author.books.map(item => {
@@ -23,6 +23,7 @@ const BookDetails = (props) => (
                         })}
                     </ul>
                     <button onClick={() => props.removeBook(data.book.id)}>Remove Book</button>
+                    <button onClick={() => props.updateBook(data.book.id)}>Update Book</button>
                 </div>
                 )
             }}

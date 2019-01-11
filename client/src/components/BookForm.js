@@ -1,6 +1,6 @@
 import * as React from 'react';
 import gql from 'graphql-tag';
-import { addBookMutation, updateBookMutation, getBooksQuery, getAuthorsQuery, addAuthorMutation  } from '../queries/queries'
+import { addBookMutation, updateBookMutation, getBooksQuery, getAuthorsQuery, addAuthorMutation, getBookQuery  } from '../queries/queries'
 import { graphql, compose } from 'react-apollo';
 import { Mutation } from 'react-apollo';
 
@@ -20,7 +20,8 @@ class BookForm extends React.Component {
        addingAuthor: false
     }
 
-    addNewAuthor = (event) => {
+    setAuthorValue= (event) => {
+        console.log(event.target.value);
         const newAuthor = {...this.state.newAuthor};
         newAuthor[event.target.name] = event.target.value
         this.setState({
@@ -30,20 +31,32 @@ class BookForm extends React.Component {
     }
 
     setBookValue = (event) => {
+
+        let addingAuthor = false;
+
+        
+        if(event.target.name === 'bookAuthor') {
+            addingAuthor= event.target.value === 'New author' ? true : false;
+        }
+
+
         const newBook = {...this.state.newBook};
         newBook[event.target.name] = event.target.value;
         this.setState({
             ...this.state,
-            newBook      
+            newBook,
+            addingAuthor      
         });
 
-        if(event.target.name === 'bookAuthor') {
-            let addingAuthor= event.target.value === 'New author' ? true : false;
-            this.setState({
-                ...this.state,
-                addingAuthor
-            })
-        }
+        // if(event.target.name === 'bookAuthor') {
+        //     let addingAuthor= event.target.value === 'New author' ? true : false;
+        //     this.setState({
+        //         newBook: {
+        //             ...this.state.newBook
+        //         },
+        //         addingAuthor
+        //     })
+        // }
     }
 
     resetState = () => {
@@ -61,41 +74,121 @@ class BookForm extends React.Component {
         this.setState(initialState);
     }
 
-    submitBook = (event) => {
-        event.preventDefault();
+    addNewAuthor = () => {
 
-        if(this.state.addingAuthor) {
-            
-            this.props.addAuthorMutation({
-                variables: {
-                    name: this.state.newAuthor.authorName
-                },
-                refetchQueries: [{ query: getAuthorsQuery }]
-            })
-            .then((resp, error) => {
-                this.props.addBookMutation({
-                    variables: {
-                        title: this.state.newBook.bookTitle,
-                        genre: this.state.newBook.bookGenre,
-                        authorId: resp.data.addAuthor.id
-                    },
-                    refetchQueries: [{ query: getBooksQuery }]
-        });
+       return this.props.addAuthorMutation({
+            variables: {
+                name: this.state.newAuthor.authorName
+            },
+            refetchQueries: [{ query: getAuthorsQuery }]
+        })
+    }
 
-            })
-            .then(() => this.resetState());
-    
-        } else {
+    addNewBook = (newAuthorId) => {
         this.props.addBookMutation({
             variables: {
                 title: this.state.newBook.bookTitle,
                 genre: this.state.newBook.bookGenre,
-                authorId: this.state.newBook.bookAuthor
+                authorId: newAuthorId ? newAuthorId : this.state.newBook.bookAuthor
             },
             refetchQueries: [{ query: getBooksQuery }]
         })
-        .then(() => this.resetState());
-    };
+        .then(() => this.resetState())
+    }
+
+    updateBook = (newAuthorId) => {
+        this.props.updateBookMutation({
+            variables: {
+                id: this.props.bookId,
+                title: this.state.newBook.bookTitle,
+                genre: this.state.newBook.bookGenre,
+                authorId: newAuthorId ? newAuthorId : this.state.newBook.bookAuthor
+            },
+            refetchQueries: [{ query: getBookQuery, variables: ({id: this.props.bookId}) }]
+        })
+        .then(() => {
+            this.resetState();
+            this.props.updateBook()
+        })
+    }
+
+    submitBook = (event) => {
+        event.preventDefault();
+
+
+        if(this.props.isUpdating) {
+
+            if(this.state.addingAuthor) {
+                this.addNewAuthor()
+                .then((resp) => {
+                    this.updateBook(resp.data.addAuthor.id)
+                })
+            } else {
+                this.updateBook()
+            }
+            
+        } else {
+
+            if(this.state.addingAuthor) {
+                this.addNewAuthor()
+                    .then((resp) => {
+                        this.addNewBook(resp.data.addAuthor.id)
+                    })
+            } else {
+                this.addNewBook()
+            }
+            
+        }
+
+
+
+    //     if(this.state.addingAuthor) {
+            
+    //         this.props.addAuthorMutation({
+    //             variables: {
+    //                 name: this.state.newAuthor.authorName
+    //             },
+    //             refetchQueries: [{ query: getAuthorsQuery }]
+    //         })
+    //         .then((resp, error) => {
+    //             this.props.addBookMutation({
+    //                 variables: {
+    //                     title: this.state.newBook.bookTitle,
+    //                     genre: this.state.newBook.bookGenre,
+    //                     authorId: resp.data.addAuthor.id
+    //                 },
+    //                 refetchQueries: [{ query: getBooksQuery }]
+    //     });
+
+    //         })
+    //         .then(() => this.resetState());
+    
+    //     } else {
+
+    //         if(this.props.isUpdating) {
+
+    //             this.props.updateBookMutation({
+    //                 variables: {
+    //                     id: this.props.bookId,
+    //                     title: this.state.newBook.bookTitle,
+    //                     genre: this.state.newBook.bookGenre,
+    //                 }
+    //             })
+    //             .then(() => this.resetState())
+    //         } else {
+
+
+    //             this.props.addBookMutation({
+    //                 variables: {
+    //                     title: this.state.newBook.bookTitle,
+    //                     genre: this.state.newBook.bookGenre,
+    //                     authorId: this.state.newBook.bookAuthor
+    //                 },
+    //                 refetchQueries: [{ query: getBooksQuery }]
+    //             })
+    //             .then(() => this.resetState());
+    //         }
+    // };
 
     }
 
@@ -118,9 +211,9 @@ class BookForm extends React.Component {
                     {this.displayAuthors()}
                     <option>New author</option>
                 </select>
-                {this.state.addingAuthor && <input type="text" name="authorName" onChange={this.addNewAuthor}></input>}
+                {this.state.addingAuthor && <input type="text" name="authorName" onChange={this.setAuthorValue}></input>}
                 <input name="bookGenre" onChange={this.setBookValue} placeholder="book genre" value={this.state.newBook.bookGenre}></input>
-                <button type="submit">Add book</button>
+                <button type="submit">{this.props.isUpdating ? 'Update Book' : 'Add new Book'}</button>
             </form>
         )
     }
@@ -129,5 +222,6 @@ class BookForm extends React.Component {
 export default compose(
     graphql(getAuthorsQuery, { name: "getAuthorsQuery" }),
     graphql(addBookMutation, { name: "addBookMutation" }),
-    graphql(addAuthorMutation, { name: "addAuthorMutation" })
+    graphql(addAuthorMutation, { name: "addAuthorMutation" }),
+    graphql(updateBookMutation, { name: "updateBookMutation" })
 )(BookForm);

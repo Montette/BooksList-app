@@ -12,7 +12,8 @@ class App extends Component {
 
   state = {
     selectedBookId: null,
-    isSelectedBookRemoving: false
+    isSelectedBookRemoving: false,
+    isSelectedBookUpdating: false
   }
 
   selectBookHandler = (id) => {
@@ -35,6 +36,13 @@ class App extends Component {
       isSelectedBookRemoving: true
     })
   }
+
+  updateHandler = (id) => {
+    this.setState({
+      ...this.state,
+      isSelectedBookUpdating: !this.state.isSelectedBookUpdating
+    })
+  }
   render() {
     return (
         <div className="container">
@@ -45,10 +53,11 @@ class App extends Component {
             id ={this.state.selectedBookId} 
             changeSelectedBook = {this.selectBookHandler} 
             removeBook={this.removeHandler}
+            updateBook={this.updateHandler}
             />   
             : 
             <p>No book selected</p>}
-            <BookForm mut='updagggte'/>
+            <BookForm updateBook={this.updateHandler} isUpdating={this.state.isSelectedBookUpdating} bookId={this.state.selectedBookId}/>
         </div>  
     );
   }
