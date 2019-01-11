@@ -48,15 +48,6 @@ class BookForm extends React.Component {
             addingAuthor      
         });
 
-        // if(event.target.name === 'bookAuthor') {
-        //     let addingAuthor= event.target.value === 'New author' ? true : false;
-        //     this.setState({
-        //         newBook: {
-        //             ...this.state.newBook
-        //         },
-        //         addingAuthor
-        //     })
-        // }
     }
 
     resetState = () => {
@@ -139,56 +130,6 @@ class BookForm extends React.Component {
             }
             
         }
-
-
-
-    //     if(this.state.addingAuthor) {
-            
-    //         this.props.addAuthorMutation({
-    //             variables: {
-    //                 name: this.state.newAuthor.authorName
-    //             },
-    //             refetchQueries: [{ query: getAuthorsQuery }]
-    //         })
-    //         .then((resp, error) => {
-    //             this.props.addBookMutation({
-    //                 variables: {
-    //                     title: this.state.newBook.bookTitle,
-    //                     genre: this.state.newBook.bookGenre,
-    //                     authorId: resp.data.addAuthor.id
-    //                 },
-    //                 refetchQueries: [{ query: getBooksQuery }]
-    //     });
-
-    //         })
-    //         .then(() => this.resetState());
-    
-    //     } else {
-
-    //         if(this.props.isUpdating) {
-
-    //             this.props.updateBookMutation({
-    //                 variables: {
-    //                     id: this.props.bookId,
-    //                     title: this.state.newBook.bookTitle,
-    //                     genre: this.state.newBook.bookGenre,
-    //                 }
-    //             })
-    //             .then(() => this.resetState())
-    //         } else {
-
-
-    //             this.props.addBookMutation({
-    //                 variables: {
-    //                     title: this.state.newBook.bookTitle,
-    //                     genre: this.state.newBook.bookGenre,
-    //                     authorId: this.state.newBook.bookAuthor
-    //                 },
-    //                 refetchQueries: [{ query: getBooksQuery }]
-    //             })
-    //             .then(() => this.resetState());
-    //         }
-    // };
 
     }
 
